@@ -22,8 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-const registerSchema = z.object({
-  name: z.string().trim().min(2, { message: "Nome é Obrigatório" }).max(50),
+const loginSchema = z.object({
   email: z
     .string()
     .trim()
@@ -43,17 +42,16 @@ const registerSchema = z.object({
     .max(100),
 });
 
-export function SignUpForm() {
-  const form = useForm<z.infer<typeof registerSchema>>({
-    resolver: zodResolver(registerSchema),
+export function LoginForm() {
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
-      name: "",
       email: "",
       password: "",
     },
   });
 
-  const onSubmit = (data: z.infer<typeof registerSchema>) => {
+  const onSubmit = (data: z.infer<typeof loginSchema>) => {
     console.log(data);
   };
   return (
@@ -61,28 +59,13 @@ export function SignUpForm() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <CardHeader>
-            <CardTitle>Criar Conta</CardTitle>
+            <CardTitle>Entrar</CardTitle>
             <CardDescription>
-              Preencha os campos abaixo para criar uma conta.
+              Entre com sua conta para continuar
             </CardDescription>
           </CardHeader>
 
           <CardContent className="mb-4 space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormItem>
-                    <FormLabel>Nome</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Digite seu Nome" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="email"
