@@ -19,7 +19,4 @@ export const auth = betterAuth({
   verification: {
     modelName: "verificationTable",
   },
-  password: {
-    modelName: "passwordTable",
-  },
 });
