@@ -24,6 +24,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { LuLoader } from "react-icons/lu";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const registerSchema = z.object({
   name: z.string().trim().min(2, { message: "Nome é Obrigatório" }).max(50),
@@ -68,10 +69,12 @@ export function SignUpForm() {
       },
       {
         onSuccess: () => {
+          toast.success("Conta criada com sucesso!");
           router.push("/dashboard");
         },
         onError: (error) => {
           console.log({ error });
+          toast.error(error.error.message);
           form.setError("root", {
             type: "onChange",
             message: error.error.message,
