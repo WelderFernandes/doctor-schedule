@@ -72,13 +72,15 @@ export function SignUpForm() {
           toast.success("Conta criada com sucesso!");
           router.push("/dashboard");
         },
-        onError: (error) => {
-          console.log({ error });
-          toast.error(error.error.message);
-          form.setError("root", {
-            type: "onChange",
-            message: error.error.message,
-          });
+        onError: (ctx) => {
+          console.log({ ctx });
+          if (ctx.error.code === "USER_ALREADY_EXISTS") {
+            toast.error("Nome ou Email já cadastrado!");
+            return;
+          } else {
+            toast.error("Erro ao criar conta, tente novamente mais tarde.");
+            return;
+          }
         },
       },
     );
