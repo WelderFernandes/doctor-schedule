@@ -18,9 +18,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { LuLoader } from "react-icons/lu";
+import { useRouter } from "next/navigation";
 
 const registerSchema = z.object({
   name: z.string().trim().min(2, { message: "Nome é Obrigatório" }).max(50),
@@ -44,6 +47,8 @@ const registerSchema = z.object({
 });
 
 export function SignUpForm() {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -53,9 +58,29 @@ export function SignUpForm() {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof registerSchema>) => {
-    console.log(data);
-  };
+  async function onSubmit(data: z.infer<typeof registerSchema>) {
+    await authClient.signUp.email(
+      {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        callbackURL: `/dashboard`,
+      },
+      {
+        onSuccess: () => {
+          router.push("/dashboard");
+        },
+        onError: (error) => {
+          console.log({ error });
+          form.setError("root", {
+            type: "onChange",
+            message: error.error.message,
+          });
+        },
+      },
+    );
+  }
+
   return (
     <Card>
       <Form {...form}>
@@ -115,8 +140,15 @@ export function SignUpForm() {
             />
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              disabled={form.formState.isSubmitting}
+              className="w-full"
+            >
               Criar conta
+              {form.formState.isSubmitting && (
+                <LuLoader className="mr-2 h-4 w-4 animate-spin" />
+              )}
             </Button>
           </CardFooter>
         </form>
