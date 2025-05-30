@@ -1,4 +1,5 @@
 "use client";
+import { createClinic } from "@/app/actions/create-clinic";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
 import {
@@ -11,7 +12,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Label } from "@radix-ui/react-label";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import z from "zod";
 
 const clinicSchema = z.object({
@@ -28,12 +32,22 @@ const clinicSchema = z.object({
 });
 
 export function ClinicForm() {
+  const router = useRouter();
   const form = useForm<z.infer<typeof clinicSchema>>({
     resolver: zodResolver(clinicSchema),
   });
 
-  const onSubmit = (values: z.infer<typeof clinicSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof clinicSchema>) => {
+    try {
+      await createClinic(values.name);
+      toast.success("Clínica criada com sucesso");
+      form.reset();
+      router.push("/dashboard");
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao criar clínica");
+      return;
+    }
   };
 
   return (
@@ -58,7 +72,12 @@ export function ClinicForm() {
           )}
         />
         <DialogFooter className="flex items-center justify-end space-x-2">
-          <Button type="submit">Save changes</Button>
+          <Button type="submit" disabled={form.formState.isSubmitting}>
+            Criar Clínica
+            {form.formState.isSubmitting && (
+              <Loader2 className="ml-2 animate-spin" />
+            )}
+          </Button>
         </DialogFooter>
       </form>
     </Form>
