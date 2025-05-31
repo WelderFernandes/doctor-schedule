@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import LoginForm from "./_components/sign-in-form";
 import { SignUpForm } from "./_components/sign-up-form";
-import { LoginForm } from "./_components/sign-in-form";
 
 function AuthenticationPage() {
   return (
